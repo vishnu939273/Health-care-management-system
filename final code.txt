@@ -1,0 +1,317 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_PATIENTS 100
+#define MAX_DOCTORS 20
+#define MAX_APPOINTMENTS 200
+#define MAX_SURGERYPATIENT 100
+
+struct Date {
+    int day;
+    int month;
+    int year;
+};
+
+struct OPPatient {
+    char name[50];
+    struct Date dob;
+    char gender;
+    char contact[15];
+};
+
+struct OPPatient patients[MAX_PATIENTS];
+int patientCount = 0;
+
+// created a Function to add new patient
+void addOPPatient() {
+    if (patientCount >= MAX_PATIENTS) {
+        printf("Maximum patient limit reached.\n");
+        return;
+    }
+
+    struct OPPatient patient;
+    printf("Enter patient name: ");
+    scanf("%s", patient.name);
+    printf("Enter date of birth (DD MM YYYY): ");
+    scanf("%d %d %d", &patient.dob.day, &patient.dob.month, &patient.dob.year);
+    printf("Enter gender (M/F): ");
+    scanf(" %c", &patient.gender);
+    printf("Enter contact number: ");
+    scanf("%s", patient.contact);
+
+    patients[patientCount++] = patient;
+    printf("OPPatient added successfully.\n");
+}
+//created a function to show list of patients
+void patientlist() {
+    printf("OPPatients:\n");
+    for (int i = 0; i < patientCount; ++i) {
+        printf("Name: %s | DOB: %02d-%02d-%04d | Gender: %c | Contact: %s\n",
+               patients[i].name, patients[i].dob.day, patients[i].dob.month, patients[i].dob.year,
+               patients[i].gender, patients[i].contact);
+    }
+}
+
+
+struct Doctor {
+    char name[50];
+    char specialization[50];
+    int maxAppointmentsPerDay;
+};
+
+struct Doctor doctors[MAX_DOCTORS];
+int doctorCount = 0;
+
+//created a funtion to add a doctor
+
+void addDoctor() {
+    if (doctorCount >= MAX_DOCTORS) {
+        printf("Maximum doctor limit reached.\n");
+        return;
+    }
+
+    struct Doctor doctor;
+    printf("Enter doctor name: ");
+    scanf("%s", doctor.name);
+    printf("Enter specialization: ");
+    scanf("%s", doctor.specialization);
+    printf("Enter maximum appointments per day: ");
+    scanf("%d", &doctor.maxAppointmentsPerDay);
+
+    doctors[doctorCount++] = doctor;
+    printf("Doctor added successfully.\n");
+}
+
+// created a Function to display all doctors
+void showDoctors() {
+    printf("Doctors:\n");
+    for (int i = 0; i < doctorCount; ++i) {
+        printf("Doctor: %s | Specialization: %s | Max Appointments: %d\n",
+               doctors[i].name, doctors[i].specialization, doctors[i].maxAppointmentsPerDay);
+    }
+}
+
+
+struct Surgerypatient {
+    char name[50]; 
+    int age;
+    char gender;
+    struct Date joiningdate;
+    int OPbednumber;
+};
+
+struct Surgerypatient surgerypatients[MAX_SURGERYPATIENT];
+int surgerypatientCount = 0;
+
+void addsurgerypatient() {
+    if (surgerypatientCount >= MAX_SURGERYPATIENT) {
+        printf("Maximum patient limit reached.\n");
+        return;
+    }
+    struct Surgerypatient surgerypatient;
+    printf("Enter surgery patient name: ");
+    scanf("%s", surgerypatient.name);
+    printf("Enter the age: ");
+    scanf("%d", &surgerypatient.age);
+    printf("Enter gender(M/F): ");
+    scanf(" %c", &surgerypatient.gender);
+    printf("Enter date of joining (DD MM YYYY): ");
+    scanf("%d %d %d", &surgerypatient.joiningdate.day, &surgerypatient.joiningdate.month, &surgerypatient.joiningdate.year);
+    printf("Enter the OP bed number: ");
+    scanf("%d", &surgerypatient.OPbednumber);
+    
+    surgerypatients[surgerypatientCount++] = surgerypatient;
+    printf("Surgery patient added successfully.\n");
+}
+
+
+// created a function to show surgery patuent list
+void surgerypatientlist() {
+    printf("Patients:\n");
+    for (int i=0; i < surgerypatientCount; ++i) {
+        printf("Name: %s | age : %d  | Gender: %c | date of joining:%02d-%02d-%04d | OP Bed Number:%d \n",surgerypatients[i].name,surgerypatients[i].age,surgerypatients[i].gender,surgerypatients[i].joiningdate.day,surgerypatients[i].joiningdate.month,surgerypatients[i].joiningdate.year,surgerypatients[i].OPbednumber);
+    }
+}
+
+
+struct Appointment {
+    struct OPPatient patient;
+    struct Doctor doctor;
+};
+
+struct Appointment appointments[MAX_APPOINTMENTS];
+int appointmentCount = 0;
+
+// Created a Function to schedule an appointment
+void scheduleAppointment() {
+    if (appointmentCount >= MAX_APPOINTMENTS) {
+        printf("Maximum appointment limit reached.\n");
+        return;
+    }
+
+    struct Appointment appointment;
+    printf("Enter patient name: ");
+    scanf("%s", appointment.patient.name);
+    printf("Enter doctor name: ");
+    scanf("%s", appointment.doctor.name);
+
+    for (int i = 0; i < doctorCount; ++i) {
+        if (strcmp(appointment.doctor.name, doctors[i].name) == 0) {
+            appointment.doctor = doctors[i];
+            break;
+        }
+    }
+
+    appointments[appointmentCount++] = appointment;
+    printf("Appointment scheduled successfully.\n");
+}
+
+// created a Function to display all appointments
+void showAppointments() {
+    printf("Appointments:\n");
+    for (int i = 0; i < appointmentCount; ++i) {
+        printf("OPPatient: %s | Doctor: %s\n",
+               appointments[i].patient.name, appointments[i].doctor.name);
+    }
+}
+
+
+struct Billing {
+    struct OPPatient patient;
+    float amount;
+};
+
+
+struct Billing bills[MAX_PATIENTS];
+int billCount = 0;
+
+// created a Function to generate bill for a patient
+void generateBill() {
+    printf("Enter patient name: ");
+    char patientName[50];
+    scanf("%s", patientName);
+
+    for (int i = 0; i < patientCount; ++i) {
+        if (strcmp(patientName, patients[i].name) == 0) {
+            printf("Enter amount: ");
+            scanf("%f", &bills[billCount].amount);
+            bills[billCount].patient = patients[i];
+            ++billCount;
+            printf("Bill generated successfully.\n");
+            return;
+        }
+    }
+
+    printf("Patient not found.\n");
+}
+
+
+// created a Function to display billing information
+void showBills() {
+    printf("Bills:\n");
+    for (int i = 0; i < billCount; ++i) {
+        printf("Patient: %s | Amount: %.2f |\n",
+               bills[i].patient.name, bills[i].amount);
+    }
+}
+
+void statistics() {
+    if (patientCount == 0) {
+        printf("No patients available.\n");
+        getchar();
+        return;
+    }
+
+    int maleCount = 0;
+    int femaleCount = 0;
+
+    for (int i = 0; i < patientCount; i++) {
+        if (patients[i].gender == 'M' || patients[i].gender == 'm') {
+            maleCount++;
+        } else {
+            femaleCount++;
+        }
+    }
+    
+  
+    printf("Statistics:\n");
+    printf("Total Patients: %d\t",patientCount);
+    printf("Male Patients: %d\t", maleCount);
+    printf("Female Patients: %d\t\n", femaleCount);
+
+    
+}
+
+
+
+// this is the Main menu
+// to select options created some cases
+void showMenu() {
+    printf("\nHospital Management System\n");
+    printf("1. Add OPPatient\n");
+    printf("2. Add Doctor\n");
+    printf("3. Schedule Appointment for OPpatient\n");
+    printf("4. OPpatient list\n");
+    printf("5. show Doctors\n");
+    printf("6. show OPpatient Appointments\n");
+    printf("7. Generate Bill\n");
+    printf("8. show Bills\n");
+    printf("9.OPpatient Statistics\n");
+    printf("10. Add sugery patient\n");
+    printf("11.surgery patient list\n");
+    printf("12. Exit\n\n");
+    printf("Enter your choice:  ");
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        showMenu();
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addOPPatient();
+                break;
+            case 2:
+                addDoctor();
+                break;
+            case 3:
+                scheduleAppointment();
+                break;
+            case 4:
+                patientlist();
+                break;
+            case 5:
+                showDoctors();
+                break;
+            case 6:
+                showAppointments();
+                break;
+            case 7:
+                generateBill();
+                break;
+            case 8:
+                showBills();
+                break;
+             case 9:
+                statistics();
+                break;
+            case 10:
+                addsurgerypatient();
+                break;
+            case 11:
+                surgerypatientlist();
+                break;
+            
+            case 12:
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
+
